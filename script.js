@@ -1158,7 +1158,7 @@
 
   function updateThemeColor() {
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", isDarkMode() ? "#090b0f" : "#f6f8fb");
+    if (meta) meta.setAttribute("content", isDarkMode() ? "#0d1115" : "#eef2f6");
   }
 
   function isDarkMode() {
