@@ -37,8 +37,8 @@ body.theme-dark {
   --line-strong: rgba(238, 242, 245, 0.28);
   --white: #ffffff;
   --signal: #dfe7ed;
-  --vital: #a8383e;
-  --vital-glow: rgba(168, 56, 62, 0.44);
+  --vital: #ff6aa8;
+  --vital-glow: rgba(255, 106, 168, 0.58);
   --danger: #8d2f32;
   --shadow: 0 38px 110px rgba(0, 0, 0, 0.62);
   --inner-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 0 50px rgba(0, 0, 0, 0.44);
@@ -1762,13 +1762,13 @@ body:not(.theme-dark) .home-logo-glitch img {
 }
 
 .theme-message.is-visible {
-  animation: themeReveal 1.45s ease both;
+  animation: themeReveal 2.2s ease both;
 }
 
 @keyframes themeReveal {
-  0% { opacity: 0; }
-  16%, 65% { opacity: 1; }
-  100% { opacity: 0; }
+  0% { opacity: 0; transform: scale(1.015); }
+  12%, 76% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.995); }
 }
 
 .toast {
