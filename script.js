@@ -270,6 +270,27 @@
     }
   };
 
+  const safeStorage = {
+    get(key, fallback = null) {
+      try {
+        const value = window.localStorage.getItem(key);
+        return value === null ? fallback : value;
+      } catch (error) {
+        console.warn("localStorage read failed:", error);
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+        return true;
+      } catch (error) {
+        console.warn("localStorage write failed:", error);
+        return false;
+      }
+    }
+  };
+
   const state = {
     screen: "home",
     selectedKey: null,
@@ -303,6 +324,7 @@
     stepButtons: [...document.querySelectorAll(".step-button")],
     freeModeInputs: [...document.querySelectorAll('input[name="freeMode"]')],
 
+    workoutScreen: document.getElementById("workoutScreen"),
     phaseLabel: document.getElementById("phaseLabel"),
     workoutTitle: document.getElementById("workoutTitle"),
     currentSet: document.getElementById("currentSet"),
@@ -592,6 +614,10 @@
     const workout = state.workout;
     if (!workout) return;
 
+    els.workoutScreen.classList.toggle("mode-rep", workout.mode === "rep" && workout.phase !== "rest");
+    els.workoutScreen.classList.toggle("mode-timer", workout.mode === "timer" && workout.phase !== "rest");
+    els.workoutScreen.classList.toggle("mode-rest", workout.phase === "rest");
+
     els.currentSet.textContent = String(workout.currentSet);
     els.totalSets.textContent = String(workout.totalSets);
 
@@ -629,6 +655,9 @@
   function renderRest() {
     const workout = state.workout;
     if (!workout) return;
+
+    els.workoutScreen.classList.remove("mode-rep", "mode-timer");
+    els.workoutScreen.classList.add("mode-rest");
 
     const progress = workout.restSeconds > 0
       ? (workout.restSeconds - workout.remainingRest) / workout.restSeconds
@@ -905,19 +934,22 @@
   }
 
   function setQuote(text) {
-    els.quoteText.animate(
-      [
-        { opacity: 0, transform: "translateY(4px)" },
-        { opacity: 1, transform: "translateY(0)" }
-      ],
-      { duration: 260, easing: "ease-out" }
-    );
+    if (typeof els.quoteText.animate === "function") {
+      els.quoteText.animate(
+        [
+          { opacity: 0, transform: "translateY(4px)" },
+          { opacity: 1, transform: "translateY(0)" }
+        ],
+        { duration: 260, easing: "ease-out" }
+      );
+    }
     els.quoteText.textContent = text;
   }
 
   function setProgress(ratio) {
     const safeRatio = clamp(ratio, 0, 1);
     els.progressRing.style.setProperty("--progress", `${safeRatio * 360}deg`);
+    els.progressRing.style.setProperty("--rep-width", `${safeRatio * 100}%`);
   }
 
   function pulseCounter() {
@@ -1055,7 +1087,7 @@
 
   function getHistory() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.history) || "[]");
+      const parsed = JSON.parse(safeStorage.get(STORAGE_KEYS.history, "[]") || "[]");
       return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
@@ -1063,12 +1095,12 @@
   }
 
   function saveHistory(history) {
-    localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history));
+    safeStorage.set(STORAGE_KEYS.history, JSON.stringify(history));
   }
 
   function getSavedSettings() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.settings) || "{}");
+      const parsed = JSON.parse(safeStorage.get(STORAGE_KEYS.settings, "{}") || "{}");
       return parsed && typeof parsed === "object" ? parsed : {};
     } catch {
       return {};
@@ -1078,11 +1110,11 @@
   function saveExerciseSettings(key, settings) {
     const current = getSavedSettings();
     current[key] = settings;
-    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(current));
+    safeStorage.set(STORAGE_KEYS.settings, JSON.stringify(current));
   }
 
   function restoreTheme() {
-    const saved = localStorage.getItem(STORAGE_KEYS.theme);
+    const saved = safeStorage.get(STORAGE_KEYS.theme, null);
     const shouldUseDark = saved === "dark";
     els.body.classList.toggle("theme-dark", shouldUseDark);
     els.darkSwitch.setAttribute("aria-pressed", String(shouldUseDark));
@@ -1093,7 +1125,7 @@
     const nextDark = !isDarkMode();
     els.body.classList.toggle("theme-dark", nextDark);
     els.darkSwitch.setAttribute("aria-pressed", String(nextDark));
-    localStorage.setItem(STORAGE_KEYS.theme, nextDark ? "dark" : "light");
+    safeStorage.set(STORAGE_KEYS.theme, nextDark ? "dark" : "light");
     updateThemeColor();
 
     if (state.workout && nextDark) {
@@ -1126,7 +1158,7 @@
 
   function updateThemeColor() {
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", isDarkMode() ? "#090a0a" : "#f3f3ef");
+    if (meta) meta.setAttribute("content", isDarkMode() ? "#090b0f" : "#f6f8fb");
   }
 
   function isDarkMode() {
@@ -1223,12 +1255,24 @@
 
   function escapeHtml(value) {
     return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
-  init();
+  function showFatalError(error) {
+    console.error(error);
+    const box = document.createElement("div");
+    box.className = "fatal-message";
+    box.textContent = "読み込み中にエラーが発生しました。index.html・style.css・script.jsが同じ階層にあるか確認してください。";
+    document.body.appendChild(box);
+  }
+
+  try {
+    init();
+  } catch (error) {
+    showFatalError(error);
+  }
 })();
