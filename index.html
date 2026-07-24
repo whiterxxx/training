@@ -9,7 +9,7 @@
 
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <link rel="icon" href="./apple-touch-icon.png">
-  <link rel="stylesheet" href="./style.css?v=6">
+  <link rel="stylesheet" href="./style.css?v=8">
 </head>
 
 <body>
@@ -250,6 +250,12 @@
               <div class="progress-zone">
                 <div class="progress-ring" id="progressRing" style="--progress: 0deg;">
                   <div class="progress-ring__inner">
+                    <div class="vital-wave" id="vitalWave" aria-hidden="true">
+                      <svg viewBox="0 0 320 72" preserveAspectRatio="none">
+                        <path class="vital-wave__baseline" d="M0 38 H320"></path>
+                        <path class="vital-wave__trace" d="M0 38 H45 L57 38 L66 25 L76 53 L88 10 L101 47 L113 38 H158 L168 31 L177 44 L189 17 L202 51 L214 38 H260 L270 34 L278 42 L290 25 L302 45 L312 38 H320"></path>
+                      </svg>
+                    </div>
                     <p class="progress-caption" id="progressCaption">CURRENT</p>
                     <p class="progress-value" id="progressValue">0</p>
                     <p class="progress-goal" id="progressGoal">/ 15</p>
@@ -264,8 +270,8 @@
             </div>
 
             <button class="counter-button" id="counterButton" type="button">
-              <span class="counter-button__plus">＋1</span>
-              <span class="counter-button__text">COUNT</span>
+              <span class="counter-button__plus">TAP</span>
+              <span class="counter-button__text">COUNT INPUT</span>
             </button>
 
             <div class="workout-controls">
@@ -359,6 +365,6 @@
     </div>
   </div>
 
-  <script src="./script.js?v=6" defer></script>
+  <script src="./script.js?v=8" defer></script>
 </body>
 </html>
