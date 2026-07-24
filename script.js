@@ -1134,7 +1134,7 @@
 
     const message = nextDark
       ? "……見つけましたね。ここからは、私の言うとおりに。"
-      : "通常の監督モードへ戻します。";
+      : "通常モードへ戻ります。";
 
     els.themeMessage.textContent = message;
     els.themeMessage.classList.remove("is-visible");
@@ -1149,7 +1149,7 @@
       els.counterText.textContent = nextDark ? "CONTINUE" : "COUNT";
       setQuote(nextDark
         ? "貴女が自分でこちらを選んだんですね。では、もう逃がしません。"
-        : "通常の監督モードへ戻しました。続けてください。"
+        : "通常モードへ戻しました。続けてください。"
       );
     }
 
