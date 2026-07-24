@@ -770,10 +770,25 @@
       return;
     }
 
-    els.phaseLabel.textContent = workout.mode === "timer" ? "HOLD TIMER" : "COUNT TRAINING";
-    els.counterButton.disabled = workout.mode === "timer" || state.isPaused || workout.currentCount >= workout.goal;
-    els.minusButton.disabled = workout.mode === "timer" || workout.currentCount <= 0 || state.isPaused;
-    els.pauseButton.disabled = false;
+    const isTransitioning = workout.phase === "transition";
+
+    els.phaseLabel.textContent = isTransitioning
+      ? "SET COMPLETE"
+      : (workout.mode === "timer" ? "HOLD TIMER" : "COUNT TRAINING");
+
+    els.counterButton.disabled =
+      workout.mode === "timer" ||
+      state.isPaused ||
+      workout.currentCount >= workout.goal ||
+      isTransitioning;
+
+    els.minusButton.disabled =
+      workout.mode === "timer" ||
+      workout.currentCount <= 0 ||
+      state.isPaused ||
+      isTransitioning;
+
+    els.pauseButton.disabled = isTransitioning;
 
     if (workout.mode === "rep") {
       const progress = workout.currentCount / workout.goal;
@@ -830,11 +845,17 @@
     vibrate(workout.currentCount % 10 === 0 ? [18, 28, 18] : 8);
 
     const progress = workout.currentCount / workout.goal;
-    setQuote(getRepLine(progress, workout.currentCount, workout.goal));
+    const quote = getRepLine(progress, workout.currentCount, workout.goal);
+    setQuote(quote);
+
+    if (workout.currentCount >= workout.goal) {
+      workout.phase = "transition";
+    }
+
     renderWorkout();
 
     if (workout.currentCount >= workout.goal) {
-      setTimeout(completeCurrentSet, 260);
+      setTimeout(completeCurrentSet, getCompletionQuoteDuration(quote));
     }
   }
 
@@ -883,9 +904,14 @@
 
     if (workout.remaining <= 0) {
       clearClock();
-      setQuote(randomLine("timerComplete"));
+
+      const quote = randomLine("timerComplete");
+      setQuote(quote);
+      workout.phase = "transition";
+      renderWorkout();
+
       vibrate([30, 45, 30]);
-      setTimeout(completeCurrentSet, 420);
+      setTimeout(completeCurrentSet, getCompletionQuoteDuration(quote));
     }
   }
 
@@ -942,7 +968,7 @@
 
   function completeCurrentSet() {
     const workout = state.workout;
-    if (!workout || workout.phase !== "active") return;
+    if (!workout || !["active", "transition"].includes(workout.phase)) return;
 
     workout.completedSets += 1;
 
@@ -1061,6 +1087,11 @@
     renderHistory();
     showScreen("home");
     showToast(finalMessage);
+  }
+
+  function getCompletionQuoteDuration(text) {
+    const characterCount = Array.from(String(text || "")).length;
+    return clamp(1800 + characterCount * 48, 3000, 6200);
   }
 
   function getRepLine(progress, current, goal) {
