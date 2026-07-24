@@ -3,273 +3,344 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f8fb">
-  <meta name="description" content="Lと一緒に回数・時間を管理する、端末風トレーニングWebアプリ。">
+  <meta name="theme-color" content="#eef2f6">
+  <meta name="description" content="Lと一緒に回数・時間を管理する、専用端末風トレーニングWebアプリ。">
   <title>TRAINING with L</title>
 
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <link rel="icon" href="./apple-touch-icon.png">
-  <link rel="stylesheet" href="./style.css?v=3">
+  <link rel="stylesheet" href="./style.css?v=4">
 </head>
 
 <body>
   <noscript><div class="fatal-message">JavaScriptを有効にするとトレーニング画面を操作できます。</div></noscript>
-  <div class="screen-noise" aria-hidden="true"></div>
-  <div class="scanline" aria-hidden="true"></div>
 
-  <div class="app-shell">
-    <header class="topbar">
-      <button class="icon-button back-button is-hidden" id="backButton" type="button" aria-label="前の画面へ戻る">
-        <span aria-hidden="true">←</span>
-      </button>
+  <div class="ambient-grid" aria-hidden="true"></div>
 
-      <button class="brand-button" id="homeButton" type="button" aria-label="ホームへ戻る">
-        <img class="brand-logo" src="./l-logo.png" alt="L">
-      </button>
+  <div class="device-shell">
+    <div class="device-screw device-screw--tl" aria-hidden="true"></div>
+    <div class="device-screw device-screw--tr" aria-hidden="true"></div>
+    <div class="device-screw device-screw--bl" aria-hidden="true"></div>
+    <div class="device-screw device-screw--br" aria-hidden="true"></div>
 
-      <button class="icon-button history-button" id="historyButton" type="button" aria-label="履歴を表示">
-        <span class="history-icon" aria-hidden="true"></span>
-      </button>
-    </header>
+    <div class="device-screen">
+      <div class="screen-noise" aria-hidden="true"></div>
+      <div class="scanline" aria-hidden="true"></div>
 
-    <main class="main-content">
-      <section class="app-screen is-active" id="homeScreen" data-screen="home">
-        <div class="hero">
-          <p class="eyebrow">L / TRAINING PROTOCOL</p>
-          <h1>TRAINING WITH L</h1>
-          <p class="hero-copy">回数と時間を、静かに記録します。</p>
-        </div>
-
-        <section class="status-card" aria-labelledby="latestTitle">
-          <div class="status-card__head">
-            <p class="micro-label" id="latestTitle">LAST SESSION</p>
-            <span class="status-indicator" aria-hidden="true"></span>
-          </div>
-          <div id="latestRecord" class="latest-record">
-            <p class="latest-record__empty">まだ記録はありません。</p>
-          </div>
-        </section>
-
-        <section class="menu-section" aria-labelledby="menuTitle">
-          <div class="section-heading">
-            <p class="micro-label" id="menuTitle">SELECT PROGRAM</p>
-            <p class="section-index">01—05</p>
-          </div>
-
-          <div class="training-menu">
-            <button class="training-card" type="button" data-exercise="squat">
-              <span class="training-card__number">01</span>
-              <span class="training-card__body">
-                <strong>スクワット</strong>
-                <small>SQUAT / REP</small>
-              </span>
-              <span class="training-card__arrow" aria-hidden="true">↗</span>
-            </button>
-
-            <button class="training-card" type="button" data-exercise="hipLift">
-              <span class="training-card__number">02</span>
-              <span class="training-card__body">
-                <strong>ヒップリフト</strong>
-                <small>HIP LIFT / REP</small>
-              </span>
-              <span class="training-card__arrow" aria-hidden="true">↗</span>
-            </button>
-
-            <button class="training-card" type="button" data-exercise="calfRaise">
-              <span class="training-card__number">03</span>
-              <span class="training-card__body">
-                <strong>カーフレイズ</strong>
-                <small>CALF RAISE / REP</small>
-              </span>
-              <span class="training-card__arrow" aria-hidden="true">↗</span>
-            </button>
-
-            <button class="training-card" type="button" data-exercise="plank">
-              <span class="training-card__number">04</span>
-              <span class="training-card__body">
-                <strong>プランク</strong>
-                <small>PLANK / TIMER</small>
-              </span>
-              <span class="training-card__arrow" aria-hidden="true">↗</span>
-            </button>
-
-            <button class="training-card training-card--free" type="button" data-exercise="free">
-              <span class="training-card__number">05</span>
-              <span class="training-card__body">
-                <strong>フリーモード</strong>
-                <small>FREE / REP OR TIMER</small>
-              </span>
-              <span class="training-card__arrow" aria-hidden="true">↗</span>
-            </button>
-          </div>
-        </section>
-
-        <p class="safety-note">痛みや強い違和感がある場合は、運動を中止してください。</p>
-      </section>
-
-      <section class="app-screen" id="setupScreen" data-screen="setup" aria-labelledby="setupTitle">
-        <div class="screen-heading">
-          <p class="eyebrow">PROGRAM SETUP</p>
-          <h2 id="setupTitle">スクワット</h2>
-          <p id="setupSubtitle">SQUAT / REP</p>
-        </div>
-
-        <form class="setup-form" id="setupForm">
-          <div class="form-block free-only is-hidden" id="freeNameBlock">
-            <label for="freeName">メニュー名</label>
-            <input id="freeName" type="text" maxlength="28" placeholder="未入力の場合は FREE TRAINING">
-          </div>
-
-          <fieldset class="form-block free-only is-hidden" id="freeModeBlock">
-            <legend>計測方法</legend>
-            <div class="segmented-control">
-              <label>
-                <input type="radio" name="freeMode" value="rep" checked>
-                <span>回数</span>
-              </label>
-              <label>
-                <input type="radio" name="freeMode" value="timer">
-                <span>秒数</span>
-              </label>
-            </div>
-          </fieldset>
-
-          <div class="form-grid">
-            <div class="form-block">
-              <label id="goalLabel" for="goalInput">1セットの回数</label>
-              <div class="number-field">
-                <button type="button" class="step-button" data-step-target="goalInput" data-step="-1" aria-label="目標を1減らす">−</button>
-                <input id="goalInput" type="number" min="1" max="999" inputmode="numeric" value="15">
-                <button type="button" class="step-button" data-step-target="goalInput" data-step="1" aria-label="目標を1増やす">＋</button>
-              </div>
-              <p class="field-unit" id="goalUnit">REPS</p>
-            </div>
-
-            <div class="form-block">
-              <label for="setsInput">セット数</label>
-              <div class="number-field">
-                <button type="button" class="step-button" data-step-target="setsInput" data-step="-1" aria-label="セット数を1減らす">−</button>
-                <input id="setsInput" type="number" min="1" max="20" inputmode="numeric" value="3">
-                <button type="button" class="step-button" data-step-target="setsInput" data-step="1" aria-label="セット数を1増やす">＋</button>
-              </div>
-              <p class="field-unit">SETS</p>
-            </div>
-          </div>
-
-          <div class="form-block">
-            <label for="restInput">セット間休憩</label>
-            <div class="range-row">
-              <input id="restInput" type="range" min="0" max="180" step="5" value="30">
-              <output id="restOutput" for="restInput">30秒</output>
-            </div>
-          </div>
-
-          <button class="primary-button" type="submit">
-            <span>START</span>
-            <small>トレーニングを開始</small>
+      <div class="app-shell">
+        <header class="topbar">
+          <button class="icon-button back-button is-hidden" id="backButton" type="button" aria-label="前の画面へ戻る">
+            <span aria-hidden="true">←</span>
           </button>
-        </form>
-      </section>
 
-      <section class="app-screen workout-screen" id="workoutScreen" data-screen="workout" aria-labelledby="workoutTitle">
-        <div class="workout-header">
-          <div>
-            <p class="eyebrow" id="phaseLabel">TRAINING</p>
-            <h2 id="workoutTitle">スクワット</h2>
-          </div>
-          <div class="set-display">
-            <span>SET</span>
-            <strong><span id="currentSet">1</span>/<span id="totalSets">3</span></strong>
-          </div>
-        </div>
+          <button class="brand-button" id="homeButton" type="button" aria-label="ホームへ戻る">
+            <span class="brand-code">L.TRM / 07</span>
+          </button>
 
-        <div class="counter-stage">
-          <div class="counter-stage__logo" aria-hidden="true">
-            <img src="./l-logo.png" alt="">
-          </div>
+          <button class="icon-button history-button" id="historyButton" type="button" aria-label="履歴を表示">
+            <span class="history-icon" aria-hidden="true"></span>
+          </button>
+        </header>
 
-          <div class="progress-zone">
-            <div class="progress-ring" id="progressRing" style="--progress: 0deg;">
-              <div class="progress-ring__inner">
-                <p class="progress-caption" id="progressCaption">CURRENT</p>
-                <p class="progress-value" id="progressValue">0</p>
-                <p class="progress-goal" id="progressGoal">/ 15</p>
+        <main class="main-content">
+          <section class="app-screen is-active" id="homeScreen" data-screen="home">
+            <div class="home-terminal">
+              <div class="terminal-meta">
+                <span>PERSONAL TRAINING TERMINAL</span>
+                <span>LINK / ACTIVE</span>
+              </div>
+
+              <div class="home-logo-lockup" aria-label="TRAINING with L">
+                <div class="home-logo-glitch">
+                  <img src="./l-logo.png" alt="L">
+                </div>
+                <p>TRAINING WITH L</p>
+              </div>
+
+              <div class="terminal-readout">
+                <span>SESSION CONTROL</span>
+                <span class="terminal-readout__pulse" aria-hidden="true"></span>
+                <span>STANDBY</span>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="quote-panel" aria-live="polite">
-          <p class="quote-speaker">L //</p>
-          <p class="quote-text" id="quoteText">開始します。姿勢を整えてください。</p>
-        </div>
+            <section class="status-card" aria-labelledby="latestTitle">
+              <div class="status-card__head">
+                <p class="micro-label" id="latestTitle">LAST SESSION</p>
+                <span class="status-index">00</span>
+              </div>
+              <div id="latestRecord" class="latest-record">
+                <p class="latest-record__empty">まだ記録はありません。</p>
+              </div>
+            </section>
 
-        <button class="counter-button" id="counterButton" type="button">
-          <span class="counter-button__plus">＋1</span>
-          <span class="counter-button__text">COUNT</span>
+            <section class="menu-section" aria-labelledby="menuTitle">
+              <div class="section-heading">
+                <p class="micro-label" id="menuTitle">PROGRAM SELECT</p>
+                <p class="section-index">CH 01—05</p>
+              </div>
+
+              <div class="training-menu">
+                <button class="training-card" type="button" data-exercise="squat">
+                  <span class="training-card__number">01</span>
+                  <span class="training-card__body">
+                    <strong>スクワット</strong>
+                    <small>SQUAT / REP</small>
+                  </span>
+                  <span class="training-card__lamp" aria-hidden="true"></span>
+                </button>
+
+                <button class="training-card" type="button" data-exercise="hipLift">
+                  <span class="training-card__number">02</span>
+                  <span class="training-card__body">
+                    <strong>ヒップリフト</strong>
+                    <small>HIP LIFT / REP</small>
+                  </span>
+                  <span class="training-card__lamp" aria-hidden="true"></span>
+                </button>
+
+                <button class="training-card" type="button" data-exercise="calfRaise">
+                  <span class="training-card__number">03</span>
+                  <span class="training-card__body">
+                    <strong>カーフレイズ</strong>
+                    <small>CALF RAISE / REP</small>
+                  </span>
+                  <span class="training-card__lamp" aria-hidden="true"></span>
+                </button>
+
+                <button class="training-card" type="button" data-exercise="plank">
+                  <span class="training-card__number">04</span>
+                  <span class="training-card__body">
+                    <strong>プランク</strong>
+                    <small>PLANK / TIMER</small>
+                  </span>
+                  <span class="training-card__lamp" aria-hidden="true"></span>
+                </button>
+
+                <button class="training-card training-card--free" type="button" data-exercise="free">
+                  <span class="training-card__number">05</span>
+                  <span class="training-card__body">
+                    <strong>フリーモード</strong>
+                    <small>FREE / REP OR TIMER</small>
+                  </span>
+                  <span class="training-card__lamp" aria-hidden="true"></span>
+                </button>
+              </div>
+            </section>
+
+            <p class="safety-note">痛みや強い違和感がある場合は、運動を中止してください。</p>
+          </section>
+
+          <section class="app-screen" id="setupScreen" data-screen="setup" aria-labelledby="setupTitle">
+            <div class="setup-display">
+              <div class="terminal-meta">
+                <span>PROGRAM CONFIGURATION</span>
+                <span id="setupSubtitle">SQUAT / REP</span>
+              </div>
+
+              <div class="setup-display__main">
+                <div class="setup-mark" aria-hidden="true">
+                  <img src="./l-logo.png" alt="">
+                </div>
+                <div class="setup-display__copy">
+                  <p class="eyebrow">SELECTED PROGRAM</p>
+                  <h1 id="setupTitle">スクワット</h1>
+                  <p>目標値を調整し、開始してください。</p>
+                </div>
+              </div>
+            </div>
+
+            <form class="setup-form" id="setupForm">
+              <div class="form-block free-only is-hidden" id="freeNameBlock">
+                <div class="form-heading-row">
+                  <label for="freeName">PROGRAM NAME</label>
+                  <span>OPTIONAL</span>
+                </div>
+                <input id="freeName" type="text" maxlength="28" placeholder="未入力の場合は FREE TRAINING">
+              </div>
+
+              <fieldset class="form-block free-only is-hidden" id="freeModeBlock">
+                <div class="form-heading-row">
+                  <legend>COUNT TYPE</legend>
+                  <span>SELECT</span>
+                </div>
+                <div class="segmented-control">
+                  <label>
+                    <input type="radio" name="freeMode" value="rep" checked>
+                    <span><b>REP</b><small>回数</small></span>
+                  </label>
+                  <label>
+                    <input type="radio" name="freeMode" value="timer">
+                    <span><b>TIMER</b><small>秒数</small></span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="setting-bank">
+                <div class="setting-module">
+                  <div class="setting-module__head">
+                    <label id="goalLabel" for="goalInput">1セットの回数</label>
+                    <span id="goalUnit">REPS</span>
+                  </div>
+                  <div class="number-field">
+                    <button type="button" class="step-button" data-step-target="goalInput" data-step="-1" aria-label="目標を1減らす">−</button>
+                    <input id="goalInput" type="number" min="1" max="999" inputmode="numeric" value="15">
+                    <button type="button" class="step-button" data-step-target="goalInput" data-step="1" aria-label="目標を1増やす">＋</button>
+                  </div>
+                </div>
+
+                <div class="setting-module">
+                  <div class="setting-module__head">
+                    <label for="setsInput">セット数</label>
+                    <span>SETS</span>
+                  </div>
+                  <div class="number-field">
+                    <button type="button" class="step-button" data-step-target="setsInput" data-step="-1" aria-label="セット数を1減らす">−</button>
+                    <input id="setsInput" type="number" min="1" max="20" inputmode="numeric" value="3">
+                    <button type="button" class="step-button" data-step-target="setsInput" data-step="1" aria-label="セット数を1増やす">＋</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-block rest-module">
+                <div class="form-heading-row">
+                  <label for="restInput">REST INTERVAL</label>
+                  <output id="restOutput" for="restInput">30秒</output>
+                </div>
+                <div class="range-shell">
+                  <input id="restInput" type="range" min="0" max="180" step="5" value="30">
+                  <div class="range-scale" aria-hidden="true">
+                    <span>0</span><span>60</span><span>120</span><span>180</span>
+                  </div>
+                </div>
+              </div>
+
+              <button class="primary-button" type="submit">
+                <span class="primary-button__mark">▶</span>
+                <span class="primary-button__copy">
+                  <b>START SESSION</b>
+                  <small>トレーニングを開始</small>
+                </span>
+                <span class="primary-button__code">EXEC</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="app-screen workout-screen" id="workoutScreen" data-screen="workout" aria-labelledby="workoutTitle">
+            <div class="workout-header">
+              <div>
+                <p class="eyebrow" id="phaseLabel">TRAINING</p>
+                <h2 id="workoutTitle">スクワット</h2>
+              </div>
+              <div class="set-display">
+                <span>SET</span>
+                <strong><span id="currentSet">1</span>/<span id="totalSets">3</span></strong>
+              </div>
+            </div>
+
+            <div class="counter-stage">
+              <div class="counter-stage__logo" aria-hidden="true">
+                <div class="workout-logo-glitch">
+                  <img src="./l-logo.png" alt="">
+                </div>
+                <span>VISUAL LINK / ACTIVE</span>
+              </div>
+
+              <div class="progress-zone">
+                <div class="progress-ring" id="progressRing" style="--progress: 0deg;">
+                  <div class="progress-ring__inner">
+                    <p class="progress-caption" id="progressCaption">CURRENT</p>
+                    <p class="progress-value" id="progressValue">0</p>
+                    <p class="progress-goal" id="progressGoal">/ 15</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="quote-panel" aria-live="polite">
+              <p class="quote-speaker">L / DIRECT CHANNEL</p>
+              <p class="quote-text" id="quoteText">開始します。姿勢を整えてください。</p>
+            </div>
+
+            <button class="counter-button" id="counterButton" type="button">
+              <span class="counter-button__plus">＋1</span>
+              <span class="counter-button__text">COUNT</span>
+            </button>
+
+            <div class="workout-controls">
+              <button class="control-button" id="minusButton" type="button">
+                <span>−1</span>
+                <small>訂正</small>
+              </button>
+              <button class="control-button" id="pauseButton" type="button">
+                <span>Ⅱ</span>
+                <small>一時停止</small>
+              </button>
+              <button class="control-button" id="endButton" type="button">
+                <span>×</span>
+                <small>終了</small>
+              </button>
+            </div>
+          </section>
+
+          <section class="app-screen" id="historyScreen" data-screen="history" aria-labelledby="historyTitle">
+            <div class="history-display">
+              <div class="terminal-meta">
+                <span>LOCAL ACTIVITY LOG</span>
+                <span>DEVICE STORAGE</span>
+              </div>
+              <div class="history-display__main">
+                <div>
+                  <p class="eyebrow">ARCHIVE</p>
+                  <h1 id="historyTitle">履歴</h1>
+                </div>
+                <button class="text-button" id="clearHistoryButton" type="button">ALL CLEAR</button>
+              </div>
+            </div>
+
+            <div class="summary-grid">
+              <article class="summary-card">
+                <p>SESSIONS</p>
+                <strong id="summarySessions">0</strong>
+                <small>完了・途中終了</small>
+              </article>
+              <article class="summary-card">
+                <p>STREAK</p>
+                <strong><span id="summaryStreak">0</span><em> DAY</em></strong>
+                <small>連続実施日数</small>
+              </article>
+              <article class="summary-card">
+                <p>TOTAL REPS</p>
+                <strong id="summaryReps">0</strong>
+                <small>累計回数</small>
+              </article>
+              <article class="summary-card">
+                <p>TOTAL TIME</p>
+                <strong id="summaryTime">00:00</strong>
+                <small>累計運動時間</small>
+              </article>
+            </div>
+
+            <div class="history-list" id="historyList">
+              <div class="empty-state">
+                <p>NO DATA</p>
+                <span>記録は端末内にのみ保存されます。</span>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer class="device-footer" aria-hidden="true">
+          <span>WITH L</span>
+          <span>TRAINING TERMINAL / PRIVATE LINK</span>
+        </footer>
+
+        <button class="dark-switch" id="darkSwitch" type="button" aria-label="dark modeを切り替える" aria-pressed="false">
+          <span class="dark-switch__dot"></span>
+          <span class="dark-switch__label">D</span>
         </button>
-
-        <div class="workout-controls">
-          <button class="control-button" id="minusButton" type="button">
-            <span>−1</span>
-            <small>訂正</small>
-          </button>
-          <button class="control-button" id="pauseButton" type="button">
-            <span>Ⅱ</span>
-            <small>一時停止</small>
-          </button>
-          <button class="control-button" id="endButton" type="button">
-            <span>×</span>
-            <small>終了</small>
-          </button>
-        </div>
-      </section>
-
-      <section class="app-screen" id="historyScreen" data-screen="history" aria-labelledby="historyTitle">
-        <div class="screen-heading history-heading">
-          <div>
-            <p class="eyebrow">LOCAL ACTIVITY LOG</p>
-            <h2 id="historyTitle">履歴</h2>
-          </div>
-          <button class="text-button" id="clearHistoryButton" type="button">ALL CLEAR</button>
-        </div>
-
-        <div class="summary-grid">
-          <article class="summary-card">
-            <p>SESSIONS</p>
-            <strong id="summarySessions">0</strong>
-            <small>完了・途中終了</small>
-          </article>
-          <article class="summary-card">
-            <p>STREAK</p>
-            <strong><span id="summaryStreak">0</span><em> DAY</em></strong>
-            <small>連続実施日数</small>
-          </article>
-          <article class="summary-card">
-            <p>TOTAL REPS</p>
-            <strong id="summaryReps">0</strong>
-            <small>累計回数</small>
-          </article>
-          <article class="summary-card">
-            <p>TOTAL TIME</p>
-            <strong id="summaryTime">00:00</strong>
-            <small>累計運動時間</small>
-          </article>
-        </div>
-
-        <div class="history-list" id="historyList">
-          <div class="empty-state">
-            <p>NO DATA</p>
-            <span>記録は端末内にのみ保存されます。</span>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <button class="dark-switch" id="darkSwitch" type="button" aria-label="dark modeを切り替える" aria-pressed="false">
-      <span class="dark-switch__dot"></span>
-      <span class="dark-switch__label">D</span>
-    </button>
+      </div>
+    </div>
   </div>
 
   <div class="theme-message" id="themeMessage" role="status" aria-live="polite"></div>
@@ -287,6 +358,6 @@
     </div>
   </div>
 
-  <script src="./script.js?v=3" defer></script>
+  <script src="./script.js?v=4" defer></script>
 </body>
 </html>
