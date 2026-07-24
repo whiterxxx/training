@@ -334,6 +334,7 @@
     progressCaption: document.getElementById("progressCaption"),
     progressValue: document.getElementById("progressValue"),
     progressGoal: document.getElementById("progressGoal"),
+    vitalWave: document.getElementById("vitalWave"),
     counterButton: document.getElementById("counterButton"),
     counterPlus: document.querySelector(".counter-button__plus"),
     counterText: document.querySelector(".counter-button__text"),
@@ -637,8 +638,8 @@
       els.progressCaption.textContent = "CURRENT";
       els.progressValue.textContent = String(workout.currentCount);
       els.progressGoal.textContent = `/ ${workout.goal}`;
-      els.counterPlus.textContent = "+1";
-      els.counterText.textContent = isDarkMode() ? "CONTINUE" : "COUNT";
+      els.counterPlus.textContent = "PUSH";
+      els.counterText.textContent = "COUNT INPUT";
       els.counterButton.classList.remove("is-hidden");
     } else {
       const progress = (workout.goal - workout.remaining) / workout.goal;
@@ -955,6 +956,16 @@
   function pulseCounter() {
     els.counterButton.classList.add("is-pressed");
     window.setTimeout(() => els.counterButton.classList.remove("is-pressed"), 90);
+
+    if (els.vitalWave) {
+      els.vitalWave.classList.remove("is-active");
+      void els.vitalWave.offsetWidth;
+      els.vitalWave.classList.add("is-active");
+
+      window.setTimeout(() => {
+        els.vitalWave?.classList.remove("is-active");
+      }, 760);
+    }
   }
 
   function renderHomeLatest() {
@@ -1134,7 +1145,7 @@
 
     const message = nextDark
       ? "……見つけましたね。ここからは、私の言うとおりに。"
-      : "通常モードへ戻ります。";
+      : "通常の監督モードへ戻します。";
 
     els.themeMessage.textContent = message;
     els.themeMessage.classList.remove("is-visible");
@@ -1146,10 +1157,11 @@
     }, 1500);
 
     if (state.workout) {
-      els.counterText.textContent = nextDark ? "CONTINUE" : "COUNT";
+      els.counterPlus.textContent = "PUSH";
+      els.counterText.textContent = "COUNT INPUT";
       setQuote(nextDark
         ? "貴女が自分でこちらを選んだんですね。では、もう逃がしません。"
-        : "通常モードへ戻しました。続けてください。"
+        : "通常の監督モードへ戻しました。続けてください。"
       );
     }
 
