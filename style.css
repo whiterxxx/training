@@ -2,10 +2,10 @@
   --page: #dce2e8;
   --device: #cbd2da;
   --device-edge: #9da7b2;
-  --screen: #f6f8fa;
-  --screen-deep: #e7ebef;
-  --panel: rgba(255, 255, 255, 0.68);
-  --panel-solid: #f9fbfc;
+  --screen: #fbfcfe;
+  --screen-deep: #f2f5f8;
+  --panel: rgba(255, 255, 255, 0.78);
+  --panel-solid: #fcfdff;
   --ink: #101418;
   --muted: #6e7882;
   --faint: #aab2ba;
@@ -167,42 +167,139 @@ input:focus-visible {
 }
 
 .screen-noise,
-.scanline {
+.scanline,
+.signal-drop {
   position: absolute;
   inset: 0;
-  z-index: 50;
+  z-index: 70;
   pointer-events: none;
 }
 
 .screen-noise {
-  opacity: 0.2;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.38'/%3E%3C/svg%3E");
+  opacity: 0.19;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+  background-size: 178px 178px;
   mix-blend-mode: multiply;
+  animation: screenNoiseMove 0.34s steps(2, end) infinite;
 }
 
 .theme-dark .screen-noise {
-  opacity: 0.23;
-  mix-blend-mode: soft-light;
+  opacity: 0.31;
+  mix-blend-mode: screen;
+  filter: contrast(1.28) brightness(0.72);
+  animation: screenNoiseMoveDark 0.27s steps(2, end) infinite;
 }
 
 .scanline {
-  opacity: 0.1;
+  opacity: 0.095;
   background: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent 3px,
     rgba(18, 24, 29, 0.09) 4px
   );
+  background-size: 100% 5px;
+  animation: scanlineDrift 7s linear infinite;
 }
 
 .theme-dark .scanline {
-  opacity: 0.14;
+  opacity: 0.2;
   background: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent 3px,
-    rgba(255, 255, 255, 0.032) 4px
+    rgba(235, 244, 250, 0.055) 4px
   );
+  animation: scanlineDriftDark 5.5s linear infinite;
+}
+
+.signal-drop {
+  top: -38%;
+  bottom: auto;
+  height: 31%;
+  opacity: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(255, 255, 255, 0.04) 22%,
+      rgba(30, 43, 54, 0.08) 52%,
+      rgba(255, 255, 255, 0.26) 57%,
+      rgba(30, 43, 54, 0.12) 61%,
+      transparent 100%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(26, 38, 48, 0.16) 3px,
+      transparent 4px
+    );
+  mix-blend-mode: multiply;
+  filter: blur(0.15px);
+  animation: signalDrop 4.9s linear infinite;
+}
+
+.theme-dark .signal-drop {
+  opacity: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(255, 255, 255, 0.015) 20%,
+      rgba(176, 203, 220, 0.08) 48%,
+      rgba(235, 246, 252, 0.2) 56%,
+      rgba(126, 31, 35, 0.14) 63%,
+      transparent 100%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(218, 235, 245, 0.1) 3px,
+      transparent 4px
+    );
+  mix-blend-mode: screen;
+  animation: signalDropDark 4.1s linear infinite;
+}
+
+@keyframes screenNoiseMove {
+  0% { transform: translate(0, 0); background-position: 0 0; }
+  25% { transform: translate(-0.7px, 0.5px); background-position: 13px -9px; }
+  50% { transform: translate(0.8px, -0.4px); background-position: -7px 16px; }
+  75% { transform: translate(-0.4px, -0.7px); background-position: 18px 5px; }
+  100% { transform: translate(0, 0); background-position: 0 0; }
+}
+
+@keyframes screenNoiseMoveDark {
+  0% { transform: translate(0, 0); background-position: 0 0; opacity: 0.25; }
+  33% { transform: translate(0.9px, -0.6px); background-position: -19px 12px; opacity: 0.34; }
+  66% { transform: translate(-0.8px, 0.5px); background-position: 11px -17px; opacity: 0.28; }
+  100% { transform: translate(0, 0); background-position: 0 0; opacity: 0.31; }
+}
+
+@keyframes scanlineDrift {
+  from { background-position: 0 0; }
+  to { background-position: 0 80px; }
+}
+
+@keyframes scanlineDriftDark {
+  from { background-position: 0 0; }
+  to { background-position: 0 110px; }
+}
+
+@keyframes signalDrop {
+  0%, 7% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 0.5; }
+  65% { opacity: 0.28; }
+  78%, 100% { transform: translateY(455%); opacity: 0; }
+}
+
+@keyframes signalDropDark {
+  0%, 5% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.72; }
+  62% { opacity: 0.42; }
+  80%, 100% { transform: translateY(455%); opacity: 0; }
 }
 
 .app-shell {
@@ -273,8 +370,9 @@ input:focus-visible {
   border-color: var(--line);
 }
 
-.back-button { justify-self: start; }
-.history-button { justify-self: end; }
+.back-button { grid-column: 1; justify-self: start; }
+.brand-button { grid-column: 2; }
+.history-button { grid-column: 3; justify-self: end; }
 
 .history-icon,
 .history-icon::before,
@@ -361,6 +459,26 @@ input:focus-visible {
     var(--screen-deep);
   border: 1px solid var(--line-strong);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.44), inset 0 0 28px rgba(40, 52, 63, 0.05);
+}
+
+body:not(.theme-dark) .home-terminal {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 1) 0%, rgba(251, 253, 255, 0.96) 38%, rgba(240, 245, 249, 0.92) 100%),
+    var(--screen-deep);
+  border-color: rgba(42, 55, 66, 0.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.96),
+    inset 0 0 34px rgba(64, 81, 96, 0.035),
+    0 8px 24px rgba(50, 65, 78, 0.055);
+}
+
+body:not(.theme-dark) .home-logo-lockup {
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.96), rgba(247, 250, 253, 0.62) 52%, transparent 78%);
+}
+
+body:not(.theme-dark) .home-logo-glitch img {
+  filter: grayscale(1) contrast(1.34) brightness(0.9) drop-shadow(0 0 0.8px rgba(7, 13, 18, 0.34));
 }
 
 .theme-dark .home-terminal,
@@ -451,8 +569,8 @@ input:focus-visible {
   z-index: -1;
   background: url("./l-logo.png") center / contain no-repeat;
   content: "";
-  opacity: 0.2;
-  filter: grayscale(1) contrast(1.5);
+  opacity: 0.27;
+  filter: grayscale(1) contrast(1.62);
   pointer-events: none;
 }
 
@@ -460,14 +578,14 @@ input:focus-visible {
 .workout-logo-glitch::before {
   clip-path: polygon(0 16%, 100% 16%, 100% 32%, 0 32%);
   transform: translate(-3px, 1px);
-  animation: logoNoiseA 3.7s steps(1, end) infinite;
+  animation: logoNoiseA 2.9s steps(1, end) infinite;
 }
 
 .home-logo-glitch::after,
 .workout-logo-glitch::after {
   clip-path: polygon(0 59%, 100% 59%, 100% 72%, 0 72%);
   transform: translate(3px, -1px);
-  animation: logoNoiseB 4.3s steps(1, end) infinite;
+  animation: logoNoiseB 3.4s steps(1, end) infinite;
 }
 
 @keyframes logoNoiseA {
@@ -798,7 +916,7 @@ input:focus-visible {
 
 .number-field {
   display: grid;
-  grid-template-columns: 34px 1fr 34px;
+  grid-template-columns: 31px minmax(0, 1fr) 31px;
   min-height: 74px;
   overflow: hidden;
   background: #11161b;
@@ -814,14 +932,20 @@ input:focus-visible {
 .number-field input {
   width: 100%;
   min-width: 0;
+  height: 100%;
+  padding: 0 3px;
+  overflow: visible;
   background: transparent;
   border: 0;
   color: #f2f5f7;
   font-family: "Courier New", monospace;
-  font-size: clamp(30px, 9vw, 44px);
+  font-size: clamp(27px, 7.6vw, 39px);
+  font-variant-numeric: tabular-nums;
   font-weight: 400;
-  letter-spacing: -0.08em;
+  letter-spacing: -0.04em;
+  line-height: 1;
   text-align: center;
+  text-indent: 0;
   text-shadow: 0 0 12px rgba(230, 239, 246, 0.15);
   appearance: textfield;
 }
@@ -1668,7 +1792,13 @@ body.is-paused .progress-ring {
   }
 
   .number-field {
-    grid-template-columns: 30px 1fr 30px;
+    grid-template-columns: 27px minmax(0, 1fr) 27px;
+  }
+
+  .number-field input {
+    padding-inline: 1px;
+    font-size: clamp(26px, 8.5vw, 35px);
+    letter-spacing: -0.06em;
   }
 
   .setup-display__main {
@@ -1698,5 +1828,23 @@ body.is-paused .progress-ring {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 350px) {
+  .setting-bank {
+    gap: 5px;
+  }
+
+  .setting-module {
+    padding-inline: 8px;
+  }
+
+  .number-field {
+    grid-template-columns: 25px minmax(0, 1fr) 25px;
+  }
+
+  .number-field input {
+    font-size: 29px;
   }
 }
